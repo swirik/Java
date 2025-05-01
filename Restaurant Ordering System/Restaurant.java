@@ -10,18 +10,19 @@ public class Restaurant {
 	private int orderTotal = 0;
 	private MenuItem[] menuItems = {
 		    // Foods
-		    new MenuItem("Choco lanay", 20),
-		    new MenuItem("Assorted Bavarian", 15),
-		    new MenuItem("Ron's Turon", 12),
-		    new MenuItem("Chicken Pastil", 35),
+		    new MenuItem("Beef Steak", 265),
+		    new MenuItem("Pasta", 185),
+		    new MenuItem("Caesar Salad", 350),
+		    new MenuItem("Fried Chicken", 200),
 		    // Drinks
-		    new MenuItem("Mountain Dew", 35),
-		    new MenuItem("Mineral Water", 25),
-		    new MenuItem("Orange Juice", 20),
+		    new MenuItem("Purified Water", 50),
+		    new MenuItem("Soda", 80),
+		    new MenuItem("Orange Juice", 80),
 		    // Add-ons
-		    new MenuItem("Gravy", 5),
-		    new MenuItem("Lomboy", 15)	};
-		    
+		    new MenuItem("Gravy", 20),
+		    new MenuItem("Garlic Bread", 50)	};
+		    new MenuItem("Rice", 35)
+	
 	// Start Program
 	public void open() {
 		boolean running = true;
