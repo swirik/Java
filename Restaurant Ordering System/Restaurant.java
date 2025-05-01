@@ -1,5 +1,3 @@
-package schoolProjectes;
-
 import java.util.Scanner;
 import java.util.ArrayList;
 import java.util.InputMismatchException;
@@ -72,7 +70,13 @@ public class Restaurant {
 				switch (choice) {
 					case "1": order();						
 						break;
-					case "2": running = false;
+					case "2": 
+						System.out.println("╔══════════════════════════════╗");
+						System.out.println("   Thank you for dining with  ");
+						System.out.println("          us, " + customerName + "!         ");
+						System.out.println("╚══════════════════════════════╝");
+						Main.delay(1000);
+						running = false;
 						break;
 					default: printError("Incorrect! Please Try Again.");
 					}
@@ -85,7 +89,13 @@ public class Restaurant {
 						break;
 					case "3": generateBill();
 						break;		
-					case "4": running = false;;
+					case "4": 
+						System.out.println("╔══════════════════════════════╗");
+						System.out.println("   Thank you for dining with  ");
+						System.out.println("          us, " + customerName + "!         ");
+						System.out.println("╚══════════════════════════════╝");
+						Main.delay(1000);
+						running = false;
 						break;
 					default: printError("Incorrect! Please Try Again.");					
 				}
@@ -93,7 +103,7 @@ public class Restaurant {
 		}
 	}
 
-	// [0] Main Menu
+	// [0] Main Menu Display method
 	public void mainMenu() {
 		Main.clear();
 		System.out.println("Welcome to our Restaurant! " + 
@@ -111,16 +121,18 @@ public class Restaurant {
 			System.out.print(">> ");
 		}
 	}
-	
+	// [1] Order Method
 	public void order() {
 	    Main.clear();
 	    boolean running = true;
 	    while (running) {
 	        Main.clear();
-	        System.out.println("=========== MENU ==========");
-	        System.out.println("[1] Foods");
-	        System.out.println("[2] Drinks");
-	        System.out.println("[3] Add-ons");
+	        System.out.println("╔══════════════════════════════╗");
+	        System.out.println("         Welcome to Menu        ");
+	        System.out.println("╚══════════════════════════════╝");
+	        System.out.println("[1] 🍽️ Foods");
+	        System.out.println("[2] 🥛 Drinks");
+	        System.out.println("[3] ➕ Add-ons");
 	        System.out.println("[4] Quit");
 	        System.out.print(">> ");
 	        String choice = in.nextLine().trim();
@@ -196,14 +208,19 @@ public class Restaurant {
 		while(true) {
 			Main.clear();
 			System.out.println("Name: " + customerName);
-		    System.out.println("Orders:");
-		    	for (int i = 0; i < orders.size(); i++) {                   
-		            OrderQuantity order = orders.get(i);
-		            System.out.println("[" + (i + 1) + "] " + order.getQuantity() + "x " + 
-		                               order.getItem().getName() + " - ₱" + order.getItem().getPrice() + 
-		                               " each (Total: ₱" + order.getTotalPrice() + ")");
-		    		}
-		    System.out.println("[1] Go Back");
+		    System.out.println("Orders:\n");
+		    System.out.printf("%-3s %-20s %-10s %-10s%n", "#", "Item", "Qty", "Total");
+		    for (int i = 0; i < orders.size(); i++) {
+		        OrderQuantity order = orders.get(i);
+		        System.out.printf("%-3d %-20s %-10d ₱%-10d%n", 
+		            (i + 1), 
+		            order.getItem().getName(), 
+		            order.getQuantity(), 
+		            order.getTotalPrice()
+		        );
+		    }
+
+		    System.out.println("\n[1] Go Back");
 		    System.out.println("[2] Remove orders");
 		    System.out.print(">> ");
 		    String choice = in.nextLine().trim();
@@ -339,7 +356,6 @@ public class Restaurant {
        Main.delay(500); 
 	   Main.clear();
    }
-   
 }
 
 
