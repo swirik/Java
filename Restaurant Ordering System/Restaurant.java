@@ -1,5 +1,3 @@
-package schoolProjectes;
-
 import java.util.Scanner;
 import java.util.ArrayList;
 import java.util.InputMismatchException;
@@ -32,7 +30,7 @@ public class Restaurant {
 		boolean running = true;
 		System.out.println("Hello!");
 		Main.delay(500);
-//		Main.clear();
+		Main.clear();
 		System.out.println("Welcome to our Restaurant!");
 		Main.delay(500);
 			while (running) {
@@ -43,8 +41,7 @@ public class Restaurant {
 			        this.customerName = name;
 			        running = false;
 			    } else {
-			        System.out.println("Please enter letters only! No numbers or special characters.");
-			        Main.delay(500);
+			        printError("Please enter letters only! No numbers or special characters.");
 			    }
 			}
 			running = true;
@@ -53,12 +50,15 @@ public class Restaurant {
 					System.out.println("Enter your cash: ");
 					System.out.print(">> ₱");
 					double cash = in.nextDouble();
+					if (cash < 0) {
+                                            printError("Cash amount can't be negative!");
+                                            continue;
+                                        }
 					this.customerCashAmount = cash;
 					running = false;
 				}
 					catch(InputMismatchException e) {
-						System.out.println("Please Enter A Number!");
-						Main.delay(500);
+						printError("Please Enter A Number!");
 						in.nextLine();
 					}
 			}
@@ -79,8 +79,7 @@ public class Restaurant {
 						running = false;
 						break;
 					default:
-						System.out.println("Incorrect. Please try again.");
-						Main.delay(500);
+						printError("Incorrect! Please Try Again.");
 					}
 			}
 			else {
@@ -101,8 +100,7 @@ public class Restaurant {
 						running = false;
 						break;
 					default:
-						System.out.println("Incorrect. Please try again.");
-						Main.delay(500);
+						printError("Incorrect! Please Try Again.");
 			}
 		}
 	}
@@ -113,7 +111,7 @@ public void mainMenu() {
 	System.out.println("\nWelcome to our Restaurant! " + 
 					   "\nCustomer: " + customerName +
 					   "\nCustomer Cash Amount: ₱" + customerCashAmount);
-	if (orders.size() < 1) {
+	if (orders.isEmpty()) {
 		System.out.println("\n1. Place Order");
 		System.out.println("2. Browse Menu");
 		System.out.println("3. Exit");
@@ -131,14 +129,19 @@ public void mainMenu() {
 	
 	// [1] Place Order
 	public void placeOrder() {
-	    System.out.println("Enter your orders (Press [Q] to quit)");
+	    System.out.println("\n========== MENU ==========");
+            for (int i = 0; i < menuItems.length; i++) {
+                System.out.println("[" + (i + 1) + "] " + menuItems[i].getName() + " - ₱" + menuItems[i].getPrice());
+            }
+            System.out.println("==========================");
+            System.out.println("Enter your orders by number (Press [Q] to quit)");
 	    boolean running = true;
 	    int i = 1;
 		    while(running) {
 		        System.out.print("Order " + i + ": ");
 		        String input = in.nextLine().trim().toUpperCase();
 			        if (input.equals("Q")) {
-			            running = false;
+			            return;
 			        	} 
 			        else {
 			            try {
@@ -162,11 +165,11 @@ public void mainMenu() {
 				                    i++;
 				                } 
 				                else {
-			                    System.out.println("No food selected. Please try again.");
+            			                    printError("No food selected. Please try again.");
 				                }
 			            } 
 			            catch (NumberFormatException e) {
-			                System.out.println("Incorrect. Please Try Again");
+			               printError("Incorrect! Please Try Again.");
 			            	}
 			        }
 		    }
@@ -181,61 +184,25 @@ public void mainMenu() {
 	        System.out.println("3. Add-ons");
 	        System.out.print(">> ");
 	        String choice = in.nextLine().trim();
-
 		        if (choice.equalsIgnoreCase("Q")) {
-		            break; // Exit the browseMenu
+		            return; // go back to main menu
 		        }
 	
 		        switch (choice) {
 		            case "1":
-		                boolean inFoodMenu = true;
-			                while (inFoodMenu) {
-			                    System.out.println("\nWelcome to Food Menu! (Press [Q] to Go Back)");
-				                    for (int i = 0; i < 4; i++) {
-				                        System.out.println("[" + (i + 1) + "] " + menuItems[i] + " - ₱" + menuItems[i].getPrice());
-				                    }
-			                    System.out.print(">> ");
-			                    String input = in.nextLine().trim();
-				                    if (input.equalsIgnoreCase("Q")) {
-				                    	inFoodMenu = false; 
-				                    }
-			                   
-		                }
-		                break;
+		               showMenuCategory("Foods", 0, 4); 
+		               break;
 	
 		            case "2":
-		                boolean inDrinksMenu = true;
-			                while (inDrinksMenu) {
-				                    System.out.println("\nWelcome to Drinks Menu! (Press [Q] to Go Back)");
-					                    for (int i = 4; i < 7; i++) {
-					                        System.out.println("[" + (i + 1) + "] " + menuItems[i] + " - ₱" + menuItems[i].getPrice());
-					                    }
-				                    System.out.print(">> ");
-				                    String input = in.nextLine().trim();
-					                    if (input.equalsIgnoreCase("Q")) {
-					                        inDrinksMenu = false;
-					                    }
-		                }
-		                break;
+		               showMenuCategory("Drinks", 4, 7); 
+        		       break;
 	
 		            case "3":
-		                boolean inAddOnsMenu = true;
-			                while (inAddOnsMenu) {
-				                    System.out.println("\nWelcome to Add-ons Menu! (Press [Q] to Go Back)");
-					                    for (int i = 7; i < 9; i++) {
-					                        System.out.println("[" + (i + 1) + "] " + menuItems[i] + " - ₱" + menuItems[i].getPrice());
-					                    }
-				                    System.out.print(">> ");
-				                    String input = in.nextLine().trim();
-					                    if (input.equalsIgnoreCase("Q")) {
-					                        inAddOnsMenu = false;
-					                    }
-		                }
-		                break;
+		               showMenuCategory("Add-ons", 7, 9); 
+		               break;
 	
 		            default:
-		                System.out.println("Incorrect. Please try again.");
-		                Main.delay(500);
+		              printError("Incorrect! Please Try Again.");
 	        }
 	    }
 	}
@@ -256,17 +223,15 @@ public void mainMenu() {
 		    System.out.print(">> ");
 		    String choice = in.nextLine().trim();
 		    	if (choice.equalsIgnoreCase("Q")) {
-		    		mainMenu();
-		    		break;
+		    		return;
 		    	}
 		    	else if (choice.equalsIgnoreCase("R")) {
 		    		removeOrder();
 		    		break;
 		    	}
 		    	else {
-		    		System.out.println("Incorrect! Please Try Again.");
-		    		Main.delay(500);
-	    	}
+		    		printError("Incorrect! Please Try Again.");
+        	    	}
 		}
 	}
 	
@@ -288,13 +253,13 @@ public void mainMenu() {
 		        String choice = in.nextLine().trim().toUpperCase();
 			        switch(choice) {
 			        	case "Q" :
-			    			mainMenu();
-			    			running = false;
-			    			break;
+			    			return;
 			        	case "Y" :
 			        		if (customerCashAmount >= orderTotal) {
 			        			customerCashAmount -= orderTotal;
 			        				System.out.println("Paid Successfully!");
+			        				orders.clear();
+			        				orderTotal = 0;
 			        				Main.delay(500);
 			        				System.out.println("Remaining Balance: ₱" + customerCashAmount);
 			        				Main.delay(500);
@@ -304,18 +269,15 @@ public void mainMenu() {
 				        				System.out.println("Press [Q] to go back to Main Menu");
 				        				String confirm = in.nextLine().trim();
 				        					if (confirm.equalsIgnoreCase("Q")) {
-				        						mainMenu();
-				        						goBack = false;
-				        						running = false;
+				        						return;
 				        						}
 				        					else {
-				        						System.out.println("Incorrect! Please Try Again.");
+				        						printError("Incorrect! Please Try Again.");
 				        						}       	
 				        					}
 			        				}
 			    			else if (customerCashAmount < orderTotal) {
-								System.out.println("Insufficient Balance!");
-								Main.delay(500);
+								printError("Insufficient Balance!");
 								
 								boolean goBack = true;
 				        			while (goBack) {
@@ -323,19 +285,16 @@ public void mainMenu() {
 										System.out.println("Press [Q] to go back to Main Menu");
 										String confirm = in.nextLine().trim();
 											if (confirm.equalsIgnoreCase("Q")){
-												mainMenu();
-												goBack = false;
-												running = false;
+												return;
 												}
 											else {
-												System.out.println("Incorrect! Please Try Again.");
+												printError("Incorrect! Please Try Again.");
 												}       	
 				        				}
 			    			}
 			        			break;
 			        	default:
-			        		System.out.println("Incorrect! Please Try Again.");
-			        		Main.delay(500);
+			        		printError("Incorrect! Please Try Again.");
 			 }
 		}
 	}
@@ -384,10 +343,10 @@ public void mainMenu() {
 	                         System.out.println("Removed " + quantityToRemove + " from your order!");
 	                     }
 	                 } else {
-	                     System.out.println("Invalid quantity! Please try again.");
+	                     printError("Invalid quantity! Please try again.");
 	                 }
 	             } catch (NumberFormatException e) {
-	                 System.out.println("Invalid input! Please enter a number.");
+	                 printError("Invalid input! Please enter a number.");
 	             }
 	         } else {
 	             orderTotal -= orderToRemove.getTotalPrice();
@@ -397,13 +356,34 @@ public void mainMenu() {
 	         
 	         Main.delay(500);
 	     } else {
-	         System.out.println("Invalid order number! Please try again.");
-	         Main.delay(500);
+	         printError("Invalid order number! Please try again.");
 	     }
 	 } catch (NumberFormatException e) {
-	     System.out.println("Invalid input! Please enter a number.");
-	     Main.delay(500);
+        	 printError("Invalid input! Please enter a number.");
 	 	}
 	}
+    	public void printError(String message) {
+    	   System.out.println("❌ " + message);
+           Main.delay(500); 
+  	 }
+  	 
+  	public void showMenuCategory(String category, int start, int end) {
+            boolean running = true;
+            while (running) {
+                System.out.println("\nWelcome to " + category + " Menu! (Press [Q] to Go Back)");
+                for (int i = start; i < end; i++) {
+                    System.out.println("[" + (i + 1) + "] " + menuItems[i] + " - ₱" + menuItems[i].getPrice());
+                }
+                System.out.print(">> ");
+                String input = in.nextLine().trim();
+                if (input.equalsIgnoreCase("Q")) {
+                    running = false;
+                }
+            }
+            
+    }
+ 
 }
+
+
 
