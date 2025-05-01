@@ -1,3 +1,5 @@
+package schoolProjectes;
+
 import java.util.Scanner;
 import java.util.ArrayList;
 import java.util.InputMismatchException;
@@ -34,14 +36,15 @@ public class Restaurant {
 			while (running) {
 			    System.out.println("Enter your name: ");
 			    System.out.print(">> ");
-			    String name = in.nextLine();
-				    if (name.matches("[a-z A-Z ]+")) {
-				        this.customerName = name;
-				        running = false;
-				    }
-				    else { 
-				    	printError("Please enter letters only! No numbers or special characters."); 
-				    }
+			    String name = in.nextLine().trim();
+			    if (name.trim().isEmpty()) {
+			        printError("Name cannot be empty or only spaces!");
+			    } else if (!name.matches("[a-zA-Z]+")) {
+			        printError("Please enter letters only! No spaces, numbers, or special characters.");
+			    } else {
+			        this.customerName = name;
+			        running = false;
+			    }
 			}
 			running = true;
 			while(running) {
@@ -49,10 +52,14 @@ public class Restaurant {
 					System.out.println("Enter your cash: ");
 					System.out.print(">> ₱");
 					double cash = in.nextDouble();
-					if (cash < 0) {
-						printError("Cash amount can't be negative!");
+					if (cash <= 0) {
+						printError("You can't buy food with that money");
 						continue;
                      }
+					if (cash > 1000000) {
+					    printError("Please enter a smaller amount.");
+					    continue;
+					}
 					this.customerCashAmount = cash;
 					running = false;
 				}
@@ -65,9 +72,9 @@ public class Restaurant {
 			in.nextLine();
 			while(running) {
 				mainMenu();
-				String choice = in.nextLine();	
+				String input = in.nextLine();	
 			if (orders.isEmpty()) {
-				switch (choice) {
+				switch (input) {
 					case "1": order();						
 						break;
 					case "2": 
@@ -82,7 +89,7 @@ public class Restaurant {
 					}
 			}
 			else {
-				switch (choice) {
+				switch (input) {
 					case "1": order();
 						break;
 					case "2": viewOrder();
@@ -90,12 +97,14 @@ public class Restaurant {
 					case "3": generateBill();
 						break;		
 					case "4": 
+						if (confirmExit()) {
 						System.out.println("╔══════════════════════════════╗");
 						System.out.println("   Thank you for dining with  ");
-						System.out.println("          us, " + customerName + "!         ");
+						System.out.println("          us, " + customerName + "!");
 						System.out.println("╚══════════════════════════════╝");
 						Main.delay(1000);
 						running = false;
+						}
 						break;
 					default: printError("Incorrect! Please Try Again.");					
 				}
@@ -108,7 +117,7 @@ public class Restaurant {
 		Main.clear();
 		System.out.println("Welcome to our Restaurant! " + 
 						   "\nCustomer: " + customerName +
-						   "\nCustomer Cash Amount: ₱" + customerCashAmount);
+						   "\nCash Balance: ₱" + customerCashAmount);
 		if (orders.isEmpty()) {
 			System.out.println("\n[1] Order");
 			System.out.println("[2] Exit");
@@ -128,15 +137,15 @@ public class Restaurant {
 	    while (running) {
 	        Main.clear();
 	        System.out.println("╔══════════════════════════════╗");
-	        System.out.println("         Welcome to Menu        ");
+	        System.out.println("      Welcome to Our Menu        ");
 	        System.out.println("╚══════════════════════════════╝");
 	        System.out.println("[1] 🍽️ Foods");
 	        System.out.println("[2] 🥛 Drinks");
 	        System.out.println("[3] ➕ Add-ons");
 	        System.out.println("[4] Quit");
 	        System.out.print(">> ");
-	        String choice = in.nextLine().trim();
-	        switch (choice) {
+	        String input = in.nextLine().trim();
+	        switch (input) {
 	            case "1": showMenuandPlaceOrder("Foods", 0, 4); // Display Foods category
 	                   break;
 	            case "2": showMenuandPlaceOrder("Drinks", 4, 7); // Display Drinks category
@@ -163,19 +172,20 @@ public class Restaurant {
 	        System.out.println("\nInput number to Order");
 	        System.out.println("[Q] - Go Back");
 	        System.out.print(">> ");
-	        String input = in.nextLine().trim().toUpperCase();
+	        String input = in.nextLine().trim();
 	        if (input.equalsIgnoreCase("Q")) {
 	            return;
 	        } else {
 	            try {
-	                int localIndex = Integer.parseInt(input) - 1; // Local index (0-based) within the category
+	                int localIndex = Integer.parseInt(input) - 1;  
 	                
-	                // Validate the local index is within the current category's range
 	                if (localIndex >= 0 && localIndex < (end - start)) {
-	                    // Convert local index to global menuItems array index
 	                    int menuIndex = start + localIndex;
-	                    
-	                    boolean itemExists = false; // Check if the item is already in the order
+	                    boolean itemExists = false;
+	                    if (orderTotal + menuItems[menuIndex].getPrice() > customerCashAmount) {
+                                    printError("You cannot afford this item.");
+                                    break;
+                                }
 	                    for (OrderQuantity orderItem : orders) {
 	                        if (orderItem.getItem() == menuItems[menuIndex]) {
 	                            orderItem.incrementQuantity(); // Increase quantity
@@ -186,7 +196,8 @@ public class Restaurant {
 	                            break;
 	                        }
 	                    }
-	                    if (!itemExists) { // If item isn't already in order, add it
+	                    if (!itemExists) {	                        
+	                        // If item isn't already in order, add it
 	                        orders.add(new OrderQuantity(menuItems[menuIndex], 1));
 	                        orderTotal += menuItems[menuIndex].getPrice();
 	                        System.out.println("Added " + menuItems[menuIndex].getName());
@@ -207,9 +218,12 @@ public class Restaurant {
 		Main.clear();
 		while(true) {
 			Main.clear();
+		    System.out.println("╔══════════════════════════════╗");
+	        System.out.println("       Current Order Details      ");
+	        System.out.println("╚══════════════════════════════╝");
 			System.out.println("Name: " + customerName);
 		    System.out.println("Orders:\n");
-		    System.out.printf("%-3s %-20s %-10s %-10s%n", "#", "Item", "Qty", "Total");
+		    System.out.printf("%-3s %-20s %-10s %-10s%n", "#", "Item", "Qty", "Total"); // Tabular Format for better display
 		    for (int i = 0; i < orders.size(); i++) {
 		        OrderQuantity order = orders.get(i);
 		        System.out.printf("%-3d %-20s %-10d ₱%-10d%n", 
@@ -221,16 +235,21 @@ public class Restaurant {
 		    }
 
 		    System.out.println("\n[1] Go Back");
-		    System.out.println("[2] Remove orders");
+		    System.out.println("[2] Remove Orders");
+		    System.out.println("[3] Remove All Orders");
 		    System.out.print(">> ");
-		    String choice = in.nextLine().trim();
-		    	if (choice.equalsIgnoreCase("1")) { 
+		    String input = in.nextLine().trim();
+		    	if (input.equalsIgnoreCase("1")) { 
 		    		return; 
 		    	}
-		    	else if (choice.equalsIgnoreCase("2")) {
+		    	else if (input.equalsIgnoreCase("2")) {
 		    		removeOrder();
 		    		break;
 		    	} 
+		        else if (input.equalsIgnoreCase("3")) {
+                    clearAllOrders();
+                    return;
+                } 
 		    	else { printError("Incorrect! Please Try Again."); }	
 		}
 	}
@@ -246,17 +265,20 @@ public class Restaurant {
 		boolean running = true;
 			while (running) {
 				Main.clear();
+			    System.out.println("╔══════════════════════════════╗");
+	            System.out.println("         Payment Details          ");
+	            System.out.println("╚══════════════════════════════╝");
 				System.out.println("Customer Name: " + customerName);
 				System.out.println("Customer Cash Amount: ₱" + customerCashAmount);
 				System.out.println("Total bill: ₱" + orderTotal);
 				System.out.println("Press [1] to go back to Main Menu");
 				System.out.println("Press [2] to pay bill");
 				System.out.print(">> ");
-		        String choice = in.nextLine().trim().toUpperCase();
-		        	if (choice.equalsIgnoreCase("1")) { 
+		        String input = in.nextLine().trim().toUpperCase();
+		        	if (input.equalsIgnoreCase("1")) { 
 		        		return; 
 		        	}		        	
-		        	else if (choice.equalsIgnoreCase("2")) {      		
+		        	else if (input.equalsIgnoreCase("2")) {      		
 		        		if (customerCashAmount >= orderTotal) {
 		        			customerCashAmount -= orderTotal;
 	        				System.out.println("Paid Successfully!");
@@ -349,14 +371,34 @@ public class Restaurant {
 				       }	     
 			 } catch (NumberFormatException e) {  printError("Invalid input! Please enter a number."); }   
 	}
+	   // [6] Remove All Orders Method 
+	   public void clearAllOrders() {
+	        System.out.println("Are you sure you want to clear all orders? (Y/N)");
+	        System.out.print(">> ");
+	        String input = in.nextLine().trim();
+	        if (input.equalsIgnoreCase("Y")) {
+	            orders.clear();
+	            orderTotal = 0;
+	            System.out.println("All orders have been cleared.");
+	            Main.delay(1000);
+	        }
+	    }
 	
-	// [6] Error Printing Method
+	// [7] Error Printing Method
     public void printError(String message) {
 	   System.out.println("❌ " + message);
        Main.delay(500); 
 	   Main.clear();
    }
+    // [8] Confirm Exit if order is not empty Method
+    public boolean confirmExit() {
+        if (!orders.isEmpty()) {
+            System.out.println("You have unpaid items in your cart.");
+            System.out.println("Are you sure you want to exit? (Y/N)");
+            System.out.print(">> ");
+            String input = in.nextLine().trim();
+            return input.equalsIgnoreCase("Y");
+        }
+        return true;
+    }
 }
-
-
-
