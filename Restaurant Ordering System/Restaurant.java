@@ -38,7 +38,9 @@ public class Restaurant {
 				        this.customerName = name;
 				        running = false;
 				    }
-				    else { printError("Please enter letters only! No numbers or special characters."); }
+				    else { 
+				    	printError("Please enter letters only! No numbers or special characters."); 
+				    }
 			}
 			running = true;
 			while(running) {
@@ -53,7 +55,9 @@ public class Restaurant {
 					this.customerCashAmount = cash;
 					running = false;
 				}
-					catch(InputMismatchException e) { printError("Please Enter A Number!"); }
+					catch(InputMismatchException e) { 
+						printError("Please Enter A Number!"); 
+					}
 			}
 			running = true;
 			in.nextLine();
@@ -115,12 +119,13 @@ public class Restaurant {
         System.out.println("==========================");
         System.out.println("Enter your orders by number (Press [Q] to quit)");
 	    boolean running = true;
-	    int i = 1;
+	    int i = 1; // Numbering to indicate how many orders the customer have
 		    while(running) {
 		        System.out.print("Order " + i + ": ");
 		        String input = in.nextLine().trim().toUpperCase();
-			        if (input.equals("Q")) { return; }
-			            
+			        if (input.equals("Q")) { 
+			        	return; 
+			        }			            
 			        else {
 			            try {
 			                int menuIndex = Integer.parseInt(input) - 1;
@@ -143,7 +148,10 @@ public class Restaurant {
 				                        System.out.println("Added " + menuItems[menuIndex].getName());
 				                    	}
 				                    i++;
-				                } else { printError("No food selected. Please try again."); }              
+				                } 
+				                else { 
+				                	printError("No food selected. Please try again."); 
+				                	}              
 			            } catch (NumberFormatException e) { printError("Incorrect! Please Try Again."); }    
 			     }
 		  }
@@ -158,7 +166,9 @@ public class Restaurant {
 	        System.out.println("3. Add-ons");
 	        System.out.print(">> ");
 	        String choice = in.nextLine().trim();
-		        if (choice.equalsIgnoreCase("Q")) { return; }            
+		        if (choice.equalsIgnoreCase("Q")) { 
+		        	return; 
+		        }            
 		        switch (choice) {
 		            case "1": showMenuCategory("Foods", 0, 4);  
 		               break;
@@ -186,11 +196,14 @@ public class Restaurant {
 		    System.out.println("Press [R] to remove orders");
 		    System.out.print(">> ");
 		    String choice = in.nextLine().trim();
-		    	if (choice.equalsIgnoreCase("Q")) { return; }
+		    	if (choice.equalsIgnoreCase("Q")) { 
+		    		return; 
+		    	}
 		    	else if (choice.equalsIgnoreCase("R")) {
 		    		removeOrder();
 		    		break;
-		    	} else { printError("Incorrect! Please Try Again."); }	
+		    	} 
+		    	else { printError("Incorrect! Please Try Again."); }	
 		}
 	}
 	
@@ -210,7 +223,9 @@ public class Restaurant {
 				System.out.println("Press [Y] to pay bill");
 				System.out.print(">> ");
 		        String choice = in.nextLine().trim().toUpperCase();
-		        	if (choice.equalsIgnoreCase("Q")) { return; }		        	
+		        	if (choice.equalsIgnoreCase("Q")) { 
+		        		return; 
+		        	}		        	
 		        	else if (choice.equalsIgnoreCase("Y")) {      		
 		        		if (customerCashAmount >= orderTotal) {
 		        			customerCashAmount -= orderTotal;
@@ -224,22 +239,31 @@ public class Restaurant {
 			        			while (goBack) {
 			        				System.out.println("Press [Q] to go back to Main Menu");
 			        				String confirm = in.nextLine().trim();
-			        					if (confirm.equalsIgnoreCase("Q")) { return; }
-			        					else { printError("Incorrect! Please Try Again."); }
+			        					if (confirm.equalsIgnoreCase("Q")) { 
+			        						return; 
+			        					} 
+			        					else { 
+			        						printError("Incorrect! Please Try Again."); 
 			        					}
-		        				} else if (customerCashAmount < orderTotal) {
-									printError("Insufficient Balance!");
-									boolean goBack = true;
-					        			while (goBack) {
-						        			System.out.println("Remove some orders to fit your budget");
-											System.out.println("Press [Q] to go back to Main Menu");
-											String confirm = in.nextLine().trim();
-												if (confirm.equalsIgnoreCase("Q")) { return; }		
-												else { printError("Incorrect! Please Try Again."); }			    	
-					        		}
-		        			}      		
-				    }
-			}
+			        			}
+		        		} 
+		        		else if (customerCashAmount < orderTotal) {
+							printError("Insufficient Balance!");
+							boolean goBack = true;
+			        			while (goBack) {
+				        			System.out.println("Remove some orders to fit your budget");
+									System.out.println("Press [Q] to go back to Main Menu");
+									String confirm = in.nextLine().trim();
+										if (confirm.equalsIgnoreCase("Q")) { 
+											return; 
+										}		
+										else { 
+											printError("Incorrect! Please Try Again."); 
+										}			    	
+					        	}
+			        	}      		
+				 }
+		   }
 	}	
 	
 	// [5] Method to remove an order
@@ -254,39 +278,46 @@ public class Restaurant {
 		System.out.print(">> ");
 		String input = in.nextLine().trim();
 		if (input.equalsIgnoreCase("Q")) { return; }	
-		 try {
-		     int orderIndex = Integer.parseInt(input) - 1;
-			     if (orderIndex >= 0 && orderIndex < orders.size()) {
-			         OrderQuantity orderToRemove = orders.get(orderIndex);
-			         if (orderToRemove.getQuantity() > 1) { 	  // If order is more than 1, program will ask for user to input how many orders to remove
-			             System.out.println("Current quantity: " + orderToRemove.getQuantity());
-			             System.out.println("How many would you like to remove? (1-" + orderToRemove.getQuantity() + ")");
-			             System.out.print(">> ");
-			             String quantityInput = in.nextLine().trim();
-				             try {
-				                 int quantityToRemove = Integer.parseInt(quantityInput);
-					                 if (quantityToRemove > 0 && quantityToRemove <= orderToRemove.getQuantity()) {
-					                     int amountToReduce = orderToRemove.getItem().getPrice() * quantityToRemove;
-					                     orderTotal -= amountToReduce;
-					                     if (quantityToRemove == orderToRemove.getQuantity()) {
-					                         orders.remove(orderIndex);
-					                         System.out.println("Order removed completely!");
-					                     } else {
-					                         orderToRemove.decreaseQuantity(quantityToRemove);
-					                         System.out.println("Removed " + quantityToRemove + " from your order!");
-					                     }
-					                 } 
-					                 else { printError("Invalid quantity! Please try again."); }
-				             } catch (NumberFormatException e) { printError("Invalid input! Please enter a number."); }
-			         }        
-			         else { 									   // if order is only one the program will automatically remove the order
-			             orderTotal -= orderToRemove.getTotalPrice();
-			             orders.remove(orderIndex);
-			             System.out.println("Order removed!");
-			         } 
-			         Main.delay(500);
-			     } else { printError("Invalid order number! Please try again."); }	     
-		 } catch (NumberFormatException e) { printError("Invalid input! Please enter a number."); }
+			try {
+				int orderIndex = Integer.parseInt(input) - 1; // Convert String to integer and decrease 1 to match menu index
+					if (orderIndex >= 0 && orderIndex < orders.size()) {
+				         OrderQuantity orderToRemove = orders.get(orderIndex);
+				         if (orderToRemove.getQuantity() > 1) { 	  // If order is more than 1, program will ask for user to input how many orders to remove
+				             System.out.println("Current quantity: " + orderToRemove.getQuantity());
+				             System.out.println("How many would you like to remove? (1-" + orderToRemove.getQuantity() + ")");
+				             System.out.print(">> ");
+				             String quantityInput = in.nextLine().trim();
+					             try {
+					                 int quantityToRemove = Integer.parseInt(quantityInput);
+						                 if (quantityToRemove > 0 && quantityToRemove <= orderToRemove.getQuantity()) {
+						                     int amountToReduce = orderToRemove.getItem().getPrice() * quantityToRemove;
+						                     orderTotal -= amountToReduce;
+						                     if (quantityToRemove == orderToRemove.getQuantity()) {
+						                         orders.remove(orderIndex);
+						                         System.out.println("Order removed completely!");
+						                     } 
+						                     else {
+						                         orderToRemove.decreaseQuantity(quantityToRemove);
+						                         System.out.println("Removed " + quantityToRemove + " from your order!");
+						                     }
+						                 } 
+						                 else { 
+						                	 printError("Invalid quantity! Please try again."); 
+						                 }
+						                 
+					             } catch (NumberFormatException e) { printError("Invalid input! Please enter a number."); }
+				         }        
+				         else { 									   // if order is only one the program will automatically remove the order
+				             orderTotal -= orderToRemove.getTotalPrice();
+				             orders.remove(orderIndex);
+				             System.out.println("Order removed!");
+				         } 
+				         Main.delay(500);
+				     } 
+					else {
+				    	 printError("Invalid order number! Please try again."); 
+				       }	     
+			 } catch (NumberFormatException e) {  printError("Invalid input! Please enter a number."); }   
 	}
 	
 	// [6] Method to Print Error 
@@ -307,3 +338,6 @@ public class Restaurant {
         }        
     }
 }
+
+
+
