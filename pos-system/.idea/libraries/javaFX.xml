@@ -1,5 +1,5 @@
 <component name="libraryTable">
-  <library name="JavaFX">
+  <library name="javaFX">
     <CLASSES>
       <root url="jar://$PROJECT_DIR$/../../everything/Files/Setup Files/javafx-sdk-24.0.1/lib/javafx.base.jar!/" />
       <root url="jar://$PROJECT_DIR$/../../everything/Files/Setup Files/javafx-sdk-24.0.1/lib/javafx.controls.jar!/" />
